@@ -30,6 +30,7 @@ module Spree
       #   size: ,
       #   facets:
       # }
+
       def to_hash_base
         q = { match_all: {} }
         if query # search in name and description
@@ -77,10 +78,10 @@ module Spree
 
         result
       end
-    end
 
-    def to_hash
-      to_hash_base
+      def to_hash
+        to_hash_base
+      end
     end
 
     include Concerns::Indexable
