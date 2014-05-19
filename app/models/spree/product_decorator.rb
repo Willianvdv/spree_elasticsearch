@@ -30,11 +30,11 @@ module Spree
       #   size: ,
       #   facets:
       # }
-      def to_hash
+      def to_hash_base
         q = { match_all: {} }
         if query # search in name and description
           q = { query_string: { query: query, fields: ['name^5','description'], use_dis_max: true } }
-        end        
+        end
         query = q
 
         and_filter = []
@@ -42,11 +42,11 @@ module Spree
           and_filter << { range: { price: { gte: price_min, lte: price_max } } }
         end
         unless @properties.nil? || @properties.empty?
-          # transform properties from [{"key1" => ["value_a","value_b"]},{"key2" => ["value_a"]} 
+          # transform properties from [{"key1" => ["value_a","value_b"]},{"key2" => ["value_a"]}
           # to { terms: { properties: ["key1||value_a","key1||value_b"] }
           #    { terms: { properties: ["key2||value_a"] }
           # This enforces "and" relation between different property values and "or" relation between same property values
-          properties = @properties.map {|k,v| [k].product(v)}.map do |pair| 
+          properties = @properties.map {|k,v| [k].product(v)}.map do |pair|
             and_filter << { terms: { properties: pair.map {|prop| prop.join("||")} } }
           end
         end
@@ -56,7 +56,7 @@ module Spree
         # facets
         facets = {
           price: { statistical: { field: "price" } },
-          properties: { terms: { field: "properties", order: "reverse_count", size: 1000000 } } 
+          properties: { terms: { field: "properties", order: "reverse_count", size: 1000000 } }
         }
 
         # basic skeleton
@@ -77,6 +77,10 @@ module Spree
 
         result
       end
+    end
+
+    def to_hash
+      to_hash_base
     end
 
     include Concerns::Indexable
