@@ -123,7 +123,7 @@ module Spree
     end
 
     # Used when creating or updating a document in the index
-    def to_hash
+    def to_hash_base
       result = {
         'id' => id,
         'name' => name,
@@ -142,6 +142,10 @@ module Spree
         end
       end
       result
+    end
+
+    def to_hash
+      to_hash_base
     end
 
     # Override from concern for better control.
