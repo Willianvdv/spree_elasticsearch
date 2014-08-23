@@ -138,7 +138,7 @@ module Spree
           products.count.should == 2
           products.to_a.find {|p| p.name == product_one.name}.should_not be_nil
           products.to_a.find {|p| p.name == product_two.name}.should_not be_nil
-        end 
+        end
 
         it "allows searching on different properties (AND relation)" do
           a_product.set_property('the_prop', 'a_value')
@@ -152,7 +152,7 @@ module Spree
           products = Spree::Product.search(properties: { 'the_prop' => ['a_value'], 'another_prop' => ['a_value'] })
           products.count.should == 1
           products.to_a[0].name.should == product.name
-        end        
+        end
       end
 
       context 'facets' do
@@ -165,7 +165,15 @@ module Spree
       end
     end
 
+
     context "update_index" do
+      it 'doesnt index when skip_index is passed to the product' do
+        a_product = build :product, skip_index: true
+        a_product.save
+        sleep 1
+        expect { Product.get(a_product.id) }.to raise_error(Elasticsearch::Transport::Transport::Errors::NotFound)
+      end
+
       it "indexes when saved and available" do
         a_product = build(:product)
         a_product.save

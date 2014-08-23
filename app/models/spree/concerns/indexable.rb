@@ -51,7 +51,7 @@ module Spree
       included do
         attr_accessor :elasticsearch_index
         attr_accessor :version
-        after_save :update_index
+        after_save :update_index, unless: :skip_index
         after_destroy :update_index
       end
 

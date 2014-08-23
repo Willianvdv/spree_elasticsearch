@@ -1,5 +1,7 @@
 module Spree
   Product.class_eval do
+    attr_accessor :skip_index
+
     # Inner class used to query elasticsearch. The idea is that the query is dynamically build based on the parameters.
     class Product::ElasticsearchQuery
       include ::Virtus.model
